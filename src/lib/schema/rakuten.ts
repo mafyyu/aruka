@@ -8,7 +8,8 @@ export const RakutenItemSchema = z.object({
   author: z.string(),
   publisherName: z.string(),
   isbn: IsbnSchema,
-  largeImageUrl: z.url().optional(),
+  // 画像がない本では空文字が返る可能性があるため、空文字も許可する
+  largeImageUrl: z.union([z.url(), z.literal("")]).optional(),
   itemCaption: z.string(),
   salesDate: z.string(),
 });
@@ -29,7 +30,7 @@ export const RakutenSearchResponseSchema = z
       author: Item.author,
       publisherName: Item.publisherName,
       isbn: Item.isbn,
-      image: Item.largeImageUrl ?? null,
+      image: Item.largeImageUrl || null,
       caption: Item.itemCaption,
       salesDate: Item.salesDate,
     })),
