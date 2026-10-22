@@ -1,6 +1,11 @@
 import { createSupabaseClient } from "@/lib/supabase";
 import { NextRequest, NextResponse } from "next/server";
-import { IsbnSchema, UserBookSchema } from "@/lib/schema/book";
+import { IsbnSchema } from "@/lib/schema/book";
+import {
+  toOwnedStatus,
+  USER_BOOK_SELECT,
+  UserBookSchema,
+} from "@/lib/schema/userBook";
 
 // isbnを受け取ってuser-booksに含まれる場合、その書籍データを返すAPI
 export async function GET(
@@ -21,21 +26,7 @@ export async function GET(
   try {
     const { data, error } = await supabase
       .from("user_books")
-      .select(
-        `
-        is_owned,
-        books (
-          isbn,
-          title,
-          titleKana,
-          author,
-          publisherName,
-          image,
-          caption,
-          salesDate
-        )
-      `,
-      )
+      .select(USER_BOOK_SELECT)
       .eq("user_id", userId)
       .eq("isbn", parsedIsbn.data)
       .maybeSingle();
@@ -53,7 +44,7 @@ export async function GET(
     }
 
     const result = {
-      isOwned: data.is_owned ? "owned" : "in_library",
+      isOwned: toOwnedStatus(data.is_owned),
       book: data.books,
     };
 

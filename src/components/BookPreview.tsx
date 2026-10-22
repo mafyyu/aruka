@@ -1,6 +1,5 @@
-import { BookResponseSchema } from "@/lib/schema/book";
+import type { Book } from "@/lib/schema/book";
 import Image from "next/image";
-import z from "zod";
 
 const styles = {
   container: {
@@ -39,18 +38,16 @@ const styles = {
   },
 } as const;
 
-type Book = z.infer<typeof BookResponseSchema>;
-
 export default function BookPreview({ book }: { book: Book }) {
   return (
     <>
       <div style={styles.container}>
         <div style={styles.imgContainer}>
-          {book[0]?.image && (
+          {book.image && (
             <Image
               style={styles.cover}
-              src={book[0]?.image}
-              alt={book[0]?.title ? `${book[0]?.title} の表紙` : "書籍の表紙"}
+              src={book.image}
+              alt={book.title ? `${book.title} の表紙` : "書籍の表紙"}
               width={120}
               height={180}
               sizes="120px"
@@ -58,9 +55,9 @@ export default function BookPreview({ book }: { book: Book }) {
           )}
         </div>
         <div style={styles.contents}>
-          <h3 style={styles.title}>{book[0]?.title}</h3>
-          <h4 style={styles.author}>{book[0]?.author}</h4>
-          <h4 style={styles.author}>ISBN-{book[0]?.isbn}</h4>
+          <h3 style={styles.title}>{book.title}</h3>
+          <h4 style={styles.author}>{book.author}</h4>
+          <h4 style={styles.author}>ISBN-{book.isbn}</h4>
         </div>
       </div>
     </>

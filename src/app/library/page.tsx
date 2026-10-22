@@ -8,7 +8,7 @@ import styles from "./page.module.css";
 import SegmentedControl from "@/components/SegmentedControl";
 import { FilterStatus } from "@/components/SegmentedControl";
 import { UserIconButton } from "@/components/UserIconButton";
-import type { UserBook } from "@/lib/schema/book";
+import type { UserBook } from "@/lib/schema/userBook";
 
 export default function Library() {
   const [books, setBooks] = useState<UserBook[]>([]);

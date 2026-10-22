@@ -13,16 +13,14 @@ import Divider from "@/components/Divider";
 import OwnedStatusBadge from "@/components/OwnedStatusBadge";
 import LibraryActionButton from "@/components/LibraryActionButton";
 import styles from "./page.module.css";
-import z from "zod";
-import { BookSchema } from "@/lib/schema/book";
+import type { Book } from "@/lib/schema/book";
+import type { LibraryStatus } from "@/lib/schema/userBook";
 import { addBook } from "@/lib/addBook";
 import { addUserBook } from "@/lib/addUserBook";
 import { updateOwnStatus } from "@/lib/updateOwnStatus";
 import { toast } from "react-hot-toast";
 import { LoadingCircle } from "@/components/LoadingCircle";
 
-type Book = z.infer<typeof BookSchema>;
-type LibraryStatus = "not_in_library" | "in_library" | "owned";
 type FetchState =
   | { status: "idle" }
   | { status: "loading" }
@@ -253,7 +251,7 @@ export default function Scan() {
         {!isScanning && result && fetchState.status === "success" && (
           <div className={styles.mainContainer}>
             <Divider text="スキャン結果"></Divider>
-            <BookPreview book={result}></BookPreview>
+            <BookPreview book={result[0]}></BookPreview>
             <OwnedStatusBadge status={status}></OwnedStatusBadge>
             <LibraryActionButton
               status={status}
