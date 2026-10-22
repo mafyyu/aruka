@@ -1,6 +1,6 @@
 import BookDetail from "@/components/BookDetail";
 import CloseHeader from "@/components/CloseHeader";
-import type { UserBook } from "@/lib/schema/book";
+import type { UserBook } from "@/lib/schema/userBook";
 import { cookies } from "next/headers";
 
 export default async function BookDetails({

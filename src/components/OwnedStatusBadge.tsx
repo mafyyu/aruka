@@ -1,3 +1,5 @@
+import type { LibraryStatus } from "@/lib/schema/userBook";
+
 const styles = {
   owned: {
     display: "flex",
@@ -39,7 +41,6 @@ const styles = {
     fontSize: "13px",
   },
 };
-type LibraryStatus = "not_in_library" | "in_library" | "owned";
 
 export default function OwnedStatusBadge({
   status,

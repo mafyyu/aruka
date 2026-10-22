@@ -1,8 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { IsbnSchema } from "@/lib/schema/book";
+import type { LibraryStatus } from "@/lib/schema/userBook";
 import { createSupabaseClient } from "@/lib/supabase";
-
-type LibraryStatus = "not_in_library" | "in_library" | "owned";
 
 // user_booksに存在するか確認するAPI
 export async function GET(request: NextRequest) {

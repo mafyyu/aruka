@@ -1,7 +1,11 @@
 import { NextRequest, NextResponse } from "next/server";
-import { IsbnSchema, UserBookResponseSchema } from "@/lib/schema/book";
+import { UserBookBodySchema } from "@/lib/schema/request";
+import {
+  toOwnedStatus,
+  USER_BOOK_SELECT,
+  UserBookListSchema,
+} from "@/lib/schema/userBook";
 import { createSupabaseClient } from "@/lib/supabase";
-import z from "zod";
 
 // ユーザが登録した本を全て取得するAPI
 export async function GET() {
@@ -13,21 +17,7 @@ export async function GET() {
   try {
     const { data, error } = await supabase
       .from("user_books")
-      .select(
-        `
-        is_owned,
-        books (
-          isbn,
-          title,
-          titleKana,
-          author,
-          publisherName,
-          image,
-          caption,
-          salesDate
-        )
-      `,
-      )
+      .select(USER_BOOK_SELECT)
       .eq("user_id", userId);
 
     if (error) {
@@ -41,11 +31,11 @@ export async function GET() {
     const result = data
       .filter((row) => row.books !== null)
       .map((row) => ({
-        isOwned: row.is_owned ? "owned" : "in_library",
+        isOwned: toOwnedStatus(row.is_owned),
         book: row.books,
       }));
 
-    const parsedResult = UserBookResponseSchema.safeParse(result);
+    const parsedResult = UserBookListSchema.safeParse(result);
     if (!parsedResult.success) {
       console.error(parsedResult.error);
       return NextResponse.json(
@@ -64,11 +54,6 @@ export async function GET() {
   }
 }
 
-const bodySchema = z.object({
-  isbn: IsbnSchema,
-  isOwned: z.boolean(),
-});
-
 // user_booksに登録するAPI
 export async function POST(request: NextRequest) {
   const { supabase, userId } = await createSupabaseClient();
@@ -82,7 +67,7 @@ export async function POST(request: NextRequest) {
     return NextResponse.json({ error: "Invalid JSON body" }, { status: 400 });
   }
 
-  const parsedBody = bodySchema.safeParse(body);
+  const parsedBody = UserBookBodySchema.safeParse(body);
   if (!parsedBody.success) {
     return NextResponse.json({ error: "Invalid ISBN data" }, { status: 400 });
   }
@@ -115,7 +100,7 @@ export async function PATCH(request: NextRequest) {
     return NextResponse.json({ error: "Invalid JSON body" }, { status: 400 });
   }
 
-  const parsedBody = bodySchema.safeParse(body);
+  const parsedBody = UserBookBodySchema.safeParse(body);
   if (!parsedBody.success) {
     return NextResponse.json({ error: "Invalid ISBN data" }, { status: 400 });
   }
