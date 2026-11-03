@@ -16,7 +16,7 @@ const styles = {
   imgContainer: {
     width: "100%",
     maxWidth: "120px",
-    marginTop: "12px",
+    marginTop: "10%",
   },
   cover: {
     width: "100%",
@@ -30,23 +30,23 @@ const styles = {
     marginTop: "20px",
     gap: "10px",
     width: "100%",
-    maxWidth: "36rem",
+    maxWidth: "65%",
     alignItems: "center",
     justifyContent: "center",
   },
   title: {
     width: "100%",
-    textAlign: "center",
+    textAlign: "center" as const,
     fontSize: "25px",
     lineHeight: 1.4,
-    overflowWrap: "anywhere",
+    overflowWrap: "anywhere" as const,
   },
   author: {
     width: "100%",
-    textAlign: "center",
-    fontWeight: "normal",
+    textAlign: "center" as const,
+    fontWeight: "normal" as const,
     lineHeight: 1.6,
-    overflowWrap: "anywhere",
+    overflowWrap: "anywhere" as const,
   },
 } as const;
 

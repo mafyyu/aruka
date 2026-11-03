@@ -1,13 +1,7 @@
 .container {
-  min-height: 100vh;
-  min-height: 100dvh;
+  height: 100vh;
   display: flex;
   flex-direction: column;
   justify-content: center;
-  justify-content: safe center;
   align-items: center;
-  overflow-x: hidden;
-  overflow-y: auto;
-  padding: max(16px, env(safe-area-inset-top)) 16px
-    max(16px, env(safe-area-inset-bottom));
 }

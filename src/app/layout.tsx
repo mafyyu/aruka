@@ -33,7 +33,6 @@ export const viewport: Viewport = {
   initialScale: 1,
   viewportFit: "cover",
   themeColor: "#51A25E",
-  interactiveWidget: "resizes-content",
 };
 
 export default function RootLayout({
@@ -45,16 +44,7 @@ export default function RootLayout({
     <ClerkProvider>
       <html lang="ja">
         <body className={notoSans.className}>
-          <Toaster
-            containerStyle={{
-              top: "max(8px, env(safe-area-inset-top))",
-            }}
-            toastOptions={{
-              style: {
-                maxWidth: "min(420px, calc(100% - 32px))",
-              },
-            }}
-          />
+          <Toaster />
           {children}
         </body>
       </html>

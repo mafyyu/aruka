@@ -1,13 +1,13 @@
 .buttonBase {
   display: flex;
-  width: 100%;
+  width: 80%;
   border: none;
   max-width: 420px;
-  margin: 24px auto 0 auto;
-  padding: 12px 16px;
-  min-height: 48px;
+  margin: 100px auto 0 auto;
+  padding: 10px;
+  aspect-ratio: 10 / 1;
   border-radius: 40px;
-  font-size: 16px;
+  font-size: 20px;
   align-items: center;
   justify-content: center;
 }
@@ -41,12 +41,4 @@
 
 .changeOwned:hover{
   opacity: 0.8;
-}
-
-.buttonBase:disabled {
-  opacity: 0.6;
-}
-
-.owned:disabled {
-  opacity: 1;
 }
