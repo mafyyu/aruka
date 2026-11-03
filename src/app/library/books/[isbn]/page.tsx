@@ -1,7 +1,9 @@
 import BookDetail from "@/components/BookDetail";
+import BodyScrollLock from "@/components/BodyScrollLock";
 import CloseHeader from "@/components/CloseHeader";
 import type { UserBook } from "@/lib/schema/book";
 import { cookies } from "next/headers";
+import styles from "./page.module.css";
 
 export default async function BookDetails({
   params,
@@ -34,10 +36,19 @@ export default async function BookDetails({
   }
 
   return (
-    <div>
-      <CloseHeader href="/library" />
-      <p>{errorMessage}</p>
-      {userData && <BookDetail userBook={userData}></BookDetail>}
+    <div className={styles.shell}>
+      <BodyScrollLock />
+      <header className={styles.header}>
+        <CloseHeader href="/library" />
+      </header>
+      <div className={styles.scroller}>
+        {errorMessage ? (
+          <p className={styles.error} role="alert">
+            {errorMessage}
+          </p>
+        ) : null}
+        {userData && <BookDetail userBook={userData}></BookDetail>}
+      </div>
     </div>
   );
 }

@@ -6,6 +6,8 @@ const styles = {
   container: {
     display: "flex",
     flexDirection: "column",
+    width: "100%",
+    maxWidth: "100%",
     margin: "auto",
   },
   imgContainer: {
@@ -16,26 +18,31 @@ const styles = {
   cover: {
     width: "100%",
     filter: "drop-shadow(0 6px 8px rgba(0,0,0,0.50))",
-    marginTop: "20%",
+    marginTop: "12px",
+    aspectRatio: "2 / 3",
+    objectFit: "cover",
   },
   contents: {
     display: "flex",
     flexDirection: "column",
     marginTop: "20px",
     gap: "10px",
+    width: "100%",
+    maxWidth: "100%",
   },
   title: {
-    display: "flex",
     width: "100%",
-    alignItems: "center",
-    justifyContent: "center",
+    textAlign: "center",
     fontSize: "25px",
+    lineHeight: 1.4,
+    overflowWrap: "anywhere",
   },
   author: {
-    display: "flex",
-    alignItems: "center",
-    justifyContent: "center",
+    width: "100%",
+    textAlign: "center",
     fontWeight: "normal",
+    lineHeight: 1.6,
+    overflowWrap: "anywhere",
   },
 } as const;
 
