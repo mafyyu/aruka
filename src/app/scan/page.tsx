@@ -197,7 +197,7 @@ export default function Scan() {
   };
 
   return (
-    <>
+    <div className={styles.page}>
       <header className={styles.header}>
         <CloseHeader href="/library" />
       </header>
@@ -282,6 +282,6 @@ export default function Scan() {
           </div>
         )}
       </main>
-    </>
+    </div>
   );
 }
