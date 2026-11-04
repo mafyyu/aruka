@@ -1,22 +1,7 @@
 "use client";
 import Image from "next/image";
 import Link from "next/link";
-
-const styles = {
-  linkContainer: {
-    display: "flex",
-    position: "absolute",
-    top: "20px",
-    right: "20px",
-    background: "none",
-    border: "none",
-    zIndex: 9999,
-  },
-  closeIcon: {
-    width: "40px",
-    height: "40px",
-  },
-} as const;
+import styles from "./CloseHeader.module.css";
 
 type CloseHeaderProps = {
   href: string;
@@ -24,13 +9,13 @@ type CloseHeaderProps = {
 
 export default function CloseHeader({ href }: CloseHeaderProps) {
   return (
-    <Link href={href} style={styles.linkContainer}>
+    <Link href={href} className={styles.close} aria-label="閉じる">
       <Image
-        style={styles.closeIcon}
+        className={styles.icon}
         src="/close.svg"
-        alt="close"
-        width={40}
-        height={40}
+        alt=""
+        width={32}
+        height={32}
       />
     </Link>
   );

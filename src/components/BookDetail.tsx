@@ -4,21 +4,14 @@ import Image from "next/image";
 import Divider from "./Divider";
 
 const styles = {
-  header: {
-    height: "70px",
-    position: "relative",
-    zIndex: 100,
-  },
   container: {
-    position: "fixed",
-    inset: "0",
-    zIndex: 50,
+    width: "100%",
     display: "flex",
     flexDirection: "column",
     alignItems: "center",
-    backgroundColor: "white",
-    overflowY: "auto",
-    flex: "1",
+    backgroundColor: "#fff",
+    color: "#171717",
+    padding: "8px 16px 24px",
   },
   imgContainer: {
     width: "100%",
@@ -36,27 +29,24 @@ const styles = {
     flexDirection: "column",
     marginTop: "20px",
     gap: "10px",
+    width: "100%",
     maxWidth: "65%",
     alignItems: "center",
     justifyContent: "center",
   },
   title: {
-    display: "flex",
     width: "100%",
-    alignItems: "center",
-    justifyContent: "center",
+    textAlign: "center" as const,
     fontSize: "25px",
+    lineHeight: 1.4,
+    overflowWrap: "anywhere" as const,
   },
   author: {
-    display: "flex",
-    alignItems: "center",
-    justifyContent: "center",
-    fontWeight: "normal",
-  },
-  dividerContainer: {
-    display: "flex",
-    justifyContent: "center",
-    alignItems: "center",
+    width: "100%",
+    textAlign: "center" as const,
+    fontWeight: "normal" as const,
+    lineHeight: 1.6,
+    overflowWrap: "anywhere" as const,
   },
 } as const;
 
@@ -68,29 +58,27 @@ export default function BookDetail({ userBook }: BookDetailProps) {
   const { book, isOwned } = userBook;
 
   return (
-    <>
-      <div style={styles.container}>
-        <div style={styles.imgContainer}>
-          {book.image && (
-            <Image
-              style={styles.cover}
-              src={book.image}
-              alt={`「${book.title}」の表紙`}
-              width={120}
-              height={180}
-              sizes="120px"
-            />
-          )}
-        </div>
-        <div style={styles.contents}>
-          <h3 style={styles.title}>{book.title}</h3>
-          <h4 style={styles.author}>{book.author}</h4>
-          <h4 style={styles.author}>ISBN-{book.isbn}</h4>
-          <OwnedStatusBadge status={isOwned}></OwnedStatusBadge>
-          <Divider text={"あらすじ"}></Divider>
-          <h4 style={styles.author}>{book.caption}</h4>
-        </div>
+    <div style={styles.container}>
+      <div style={styles.imgContainer}>
+        {book.image && (
+          <Image
+            style={styles.cover}
+            src={book.image}
+            alt={`「${book.title}」の表紙`}
+            width={120}
+            height={180}
+            sizes="120px"
+          />
+        )}
       </div>
-    </>
+      <div style={styles.contents}>
+        <h3 style={styles.title}>{book.title}</h3>
+        <h4 style={styles.author}>{book.author}</h4>
+        <h4 style={styles.author}>ISBN-{book.isbn}</h4>
+        <OwnedStatusBadge status={isOwned}></OwnedStatusBadge>
+        <Divider text={"あらすじ"}></Divider>
+        <h4 style={styles.author}>{book.caption}</h4>
+      </div>
+    </div>
   );
 }

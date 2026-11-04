@@ -1,4 +1,4 @@
-import type { Metadata } from "next";
+import type { Metadata, Viewport } from "next";
 import { Toaster } from "react-hot-toast";
 import { Noto_Sans_JP } from "next/font/google";
 import "./globals.css";
@@ -22,12 +22,17 @@ export const metadata: Metadata = {
     statusBarStyle: "black-translucent",
   },
 
-  themeColor: "#51A25E",
-
   icons: {
     icon: "/icon.png",
     apple: "/icon.png",
   },
+};
+
+export const viewport: Viewport = {
+  width: "device-width",
+  initialScale: 1,
+  viewportFit: "cover",
+  themeColor: "#51A25E",
 };
 
 export default function RootLayout({
