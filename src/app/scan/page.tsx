@@ -218,7 +218,9 @@ export default function Scan() {
               {cameraReady && <div className={styles.scanLine}></div>}
             </div>
 
-            <h3 className={styles.faildScan}>読み取れない場合</h3>
+            <label className={styles.faildScan} htmlFor="isbn">
+              読み取れない場合
+            </label>
             <div className={styles.container}>
               <input
                 className={styles.input}
@@ -228,9 +230,24 @@ export default function Scan() {
                 id="isbn"
                 maxLength={13}
                 required
+                enterKeyHint="search"
+                autoComplete="off"
                 placeholder="9784123456789"
                 pattern="^[\x00-\x7F]+$"
                 title="本の裏表紙にある「9から始まる13桁の数字（ISBN）」を入力してください"
+                onFocus={(e) => {
+                  e.currentTarget.scrollIntoView({
+                    block: "center",
+                    behavior: "smooth",
+                  });
+                }}
+                onKeyDown={(e) => {
+                  if (e.key === "Enter" && isbn.length === 13 && isScanning) {
+                    e.preventDefault();
+                    setIsScanning(false);
+                    fetchBook(isbn);
+                  }
+                }}
                 onChange={(e) => {
                   setIsbn(e.target.value.replace(/[^0-9]/g, ""));
                 }}
