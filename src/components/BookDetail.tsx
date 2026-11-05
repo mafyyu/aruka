@@ -1,4 +1,4 @@
-import type { UserBook } from "@/lib/schema/book";
+import type { UserBook } from "@/lib/schema/userBook";
 import OwnedStatusBadge from "./OwnedStatusBadge";
 import Image from "next/image";
 import Divider from "./Divider";

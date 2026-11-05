@@ -1,6 +1,5 @@
 import "./LibraryActionButton.css";
-
-type LibraryStatus = "not_in_library" | "in_library" | "owned";
+import type { LibraryStatus } from "@/lib/schema/userBook";
 
 type Props = {
   status: LibraryStatus;

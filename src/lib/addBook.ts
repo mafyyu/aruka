@@ -1,7 +1,4 @@
-import z from "zod";
-import { BookSchema } from "./schema/book";
-
-type Book = z.infer<typeof BookSchema>;
+import type { Book } from "./schema/book";
 
 export async function addBook(book: Book) {
   const res = await fetch("/api/items", {

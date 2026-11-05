@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
-import { bodySchema, BookResponseSchema } from "@/lib/schema/book";
+import { IsbnBodySchema } from "@/lib/schema/request";
+import { RakutenSearchResponseSchema } from "@/lib/schema/rakuten";
 
 export async function POST(request: NextRequest) {
   let body;
@@ -9,7 +10,7 @@ export async function POST(request: NextRequest) {
   } catch {
     return NextResponse.json({ error: "Invalid JSON body" }, { status: 400 });
   }
-  const parsedBody = bodySchema.safeParse(body);
+  const parsedBody = IsbnBodySchema.safeParse(body);
 
   // バーコードが適していない場合にはエラーを返す
   if (!parsedBody.success) {
@@ -35,7 +36,7 @@ export async function POST(request: NextRequest) {
       );
     }
     const data = await res.json();
-    const parsedResponse = BookResponseSchema.safeParse(data);
+    const parsedResponse = RakutenSearchResponseSchema.safeParse(data);
 
     if (!parsedResponse.success) {
       console.error(
