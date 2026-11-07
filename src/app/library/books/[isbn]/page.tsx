@@ -1,5 +1,6 @@
 import BookDetail from "@/components/BookDetail";
 import CloseHeader from "@/components/CloseHeader";
+import styles from "./page.module.css";
 import type { UserBook } from "@/lib/schema/book";
 import { cookies } from "next/headers";
 
@@ -34,10 +35,14 @@ export default async function BookDetails({
   }
 
   return (
-    <div>
-      <CloseHeader href="/library" />
-      <p>{errorMessage}</p>
-      {userData && <BookDetail userBook={userData}></BookDetail>}
+    <div className={styles.detail}>
+      <header className={styles.header}>
+        <CloseHeader href="/library" />
+      </header>
+      <main className={styles.main}>
+        <p>{errorMessage}</p>
+        {userData && <BookDetail userBook={userData}></BookDetail>}
+      </main>
     </div>
   );
 }

@@ -1,0 +1,33 @@
+.detail {
+  height: 100dvh;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+.header {
+  height: 70px;
+  position: relative;
+  flex-shrink: 0;
+}
+
+.main {
+  flex: 1;
+  min-height: 0;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  -webkit-overflow-scrolling: touch;
+  padding-bottom: calc(32px + env(safe-area-inset-bottom));
+}
+
+html:has(.detail) {
+  overflow: hidden;
+  overscroll-behavior: none;
+}
+html:has(.detail) body {
+  overflow: hidden;
+  position: fixed;
+  inset: 0;
+  width: 100%;
+}

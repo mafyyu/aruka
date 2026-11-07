@@ -4,26 +4,17 @@ import Image from "next/image";
 import Divider from "./Divider";
 
 const styles = {
-  header: {
-    height: "70px",
-    position: "relative",
-    zIndex: 100,
-  },
   container: {
-    position: "fixed",
-    inset: "0",
-    zIndex: 50,
     display: "flex",
     flexDirection: "column",
     alignItems: "center",
     backgroundColor: "white",
-    overflowY: "auto",
-    flex: "1",
+    width: "100%",
   },
   imgContainer: {
     width: "100%",
     maxWidth: "120px",
-    marginTop: "10%",
+    marginTop: "20px",
   },
   cover: {
     width: "100%",

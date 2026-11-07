@@ -35,9 +35,14 @@ export default function Library() {
       try {
         const res = await fetch("/api/user-books");
         const data = await res.json();
+        if (!res.ok || !Array.isArray(data)) {
+          setBooks([]);
+          return;
+        }
         setBooks(data);
       } catch (error) {
         console.log(error);
+        setBooks([]);
       }
     };
     fetchUserBook();
