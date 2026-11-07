@@ -12,14 +12,14 @@
   },
   "dependencies": {
     "@clerk/nextjs": "^6.39.8",
-    "@supabase/supabase-js": "^2.89.0",
-    "@zxing/browser": "^0.1.5",
-    "@zxing/library": "^0.21.3",
-    "next": "^16.4.2",
-    "react": "19.2.3",
-    "react-dom": "19.2.3",
-    "react-hot-toast": "^2.6.0",
-    "zod": "^4.2.1"
+    "@supabase/supabase-js": "^2.118.0",
+    "@zxing/browser": "^0.2.1",
+    "@zxing/library": "^0.23.0",
+    "next": "^16.4.5",
+    "react": "19.3.1",
+    "react-dom": "19.3.1",
+    "react-hot-toast": "^2.6.1",
+    "zod": "^4.6.7"
   },
   "devDependencies": {
     "@types/minimatch": "^6.0.0",
@@ -27,10 +27,10 @@
     "@types/react": "^19",
     "@types/react-dom": "^19",
     "eslint": "^9",
-    "eslint-config-next": "^16.4.2",
+    "eslint-config-next": "^16.4.5",
     "husky": "^9.1.7",
     "lint-staged": "^16.2.7",
-    "prettier": "3.7.4",
+    "prettier": "3.9.10",
     "typescript": "^5"
   },
   "lint-staged": {
