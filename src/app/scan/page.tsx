@@ -19,7 +19,7 @@ import { addBook } from "@/lib/addBook";
 import { addUserBook } from "@/lib/addUserBook";
 import { updateOwnStatus } from "@/lib/updateOwnStatus";
 import { toast } from "react-hot-toast";
-import { LoadingCircle } from "@/components/LoadingCircle";
+import { LoadingLottie } from "@/components/LoadingLottie";
 
 type Book = z.infer<typeof BookSchema>;
 type LibraryStatus = "not_in_library" | "in_library" | "owned";
@@ -44,7 +44,6 @@ export default function Scan() {
   const [fetchState, setFetchState] = useState<FetchState>({
     status: "idle",
   });
-
   // エラーからtoastを出して元の画面に戻す共通関数
   const handleScanError = (message: string) => {
     toast.error(message, { duration: 5000 });
@@ -109,6 +108,7 @@ export default function Scan() {
   }, []);
 
   const mountedRef = useRef(true);
+
   // カメラ操作
   useEffect(() => {
     if (!videoRef.current) return;
@@ -249,7 +249,7 @@ export default function Scan() {
             </div>
           </div>
         )}
-        {fetchState.status === "loading" && <LoadingCircle />}
+        {fetchState.status === "loading" && <LoadingLottie />}
         {!isScanning && result && fetchState.status === "success" && (
           <div className={styles.mainContainer}>
             <Divider text="スキャン結果"></Divider>
