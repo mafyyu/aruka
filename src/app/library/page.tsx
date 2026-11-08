@@ -9,9 +9,11 @@ import SegmentedControl from "@/components/SegmentedControl";
 import { FilterStatus } from "@/components/SegmentedControl";
 import { UserIconButton } from "@/components/UserIconButton";
 import type { UserBook } from "@/lib/schema/book";
+import { LoadingLottie } from "@/components/LoadingLottie";
 
 export default function Library() {
   const [books, setBooks] = useState<UserBook[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
   const [filter, setFilter] = useState<FilterStatus>("all");
 
   // statusを変えるための関数
@@ -43,6 +45,8 @@ export default function Library() {
       } catch (error) {
         console.log(error);
         setBooks([]);
+      } finally {
+        setIsLoading(false);
       }
     };
     fetchUserBook();
@@ -99,6 +103,7 @@ export default function Library() {
           <ScanButton variant="fab" />
         </footer>
       </div>
+      {isLoading && <LoadingLottie />}
     </>
   );
 }
