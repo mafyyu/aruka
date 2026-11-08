@@ -77,7 +77,7 @@ export default function Library() {
           ]}
           onChange={setFilterValue}
         />
-        <main className={styles.bookDisplay}>
+        <main>
           <div className={styles.container}>
             {visibleBook.map((userBook) => (
               <Link
