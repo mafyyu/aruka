@@ -1,16 +1,12 @@
-import { NextRequest, NextResponse } from "next/server";
+import { NextResponse } from "next/server";
 import { IsbnSchema, UserBookResponseSchema } from "@/lib/schema/book";
-import { createSupabaseClient } from "@/lib/supabase";
+import { apiHandler } from "@/lib/api/handler";
+import { ApiError, throwDbError } from "@/lib/api/errors";
 import z from "zod";
 
 // ユーザが登録した本を全て取得するAPI
-export async function GET() {
-  const { supabase, userId } = await createSupabaseClient();
-  if (!userId) {
-    return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
-  }
-
-  try {
+export const GET = apiHandler({
+  handle: async ({ supabase, userId }) => {
     const { data, error } = await supabase
       .from("user_books")
       .select(
@@ -30,13 +26,7 @@ export async function GET() {
       )
       .eq("user_id", userId);
 
-    if (error) {
-      console.error(error);
-      return NextResponse.json(
-        { error: "Failed to fetch user books" },
-        { status: 500 },
-      );
-    }
+    if (error) throwDbError(error, "Failed to fetch user books");
 
     const result = data
       .filter((row) => row.books !== null)
@@ -47,22 +37,12 @@ export async function GET() {
 
     const parsedResult = UserBookResponseSchema.safeParse(result);
     if (!parsedResult.success) {
-      console.error(parsedResult.error);
-      return NextResponse.json(
-        { error: "Invalid user books data" },
-        { status: 500 },
-      );
+      throw new ApiError(500, "Invalid user books data", parsedResult.error);
     }
 
     return NextResponse.json(parsedResult.data);
-  } catch (error) {
-    console.log(error);
-    return NextResponse.json(
-      { error: "Unexpected server error" },
-      { status: 500 },
-    );
-  }
-}
+  },
+});
 
 const bodySchema = z.object({
   isbn: IsbnSchema,
@@ -70,72 +50,36 @@ const bodySchema = z.object({
 });
 
 // user_booksに登録するAPI
-export async function POST(request: NextRequest) {
-  const { supabase, userId } = await createSupabaseClient();
-  if (!userId)
-    return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+export const POST = apiHandler({
+  body: bodySchema,
+  handle: async ({ supabase, userId, body }) => {
+    const { error } = await supabase.from("user_books").insert({
+      isbn: body.isbn,
+      user_id: userId,
+      is_owned: body.isOwned,
+    });
+    if (error) throwDbError(error, "Failed to register book");
 
-  let body;
-  try {
-    body = await request.json();
-  } catch {
-    return NextResponse.json({ error: "Invalid JSON body" }, { status: 400 });
-  }
-
-  const parsedBody = bodySchema.safeParse(body);
-  if (!parsedBody.success) {
-    return NextResponse.json({ error: "Invalid ISBN data" }, { status: 400 });
-  }
-
-  const { error } = await supabase.from("user_books").insert({
-    isbn: parsedBody.data.isbn,
-    user_id: userId,
-    is_owned: parsedBody.data.isOwned,
-  });
-  if (error) {
-    return NextResponse.json(
-      { error: "Failed to register book" },
-      { status: 500 },
-    );
-  }
-
-  return NextResponse.json({ result: "created" }, { status: 201 });
-}
+    return NextResponse.json({ result: "created" }, { status: 201 });
+  },
+});
 
 // 購入済みを変更するAPI
-export async function PATCH(request: NextRequest) {
-  const { supabase, userId } = await createSupabaseClient();
-  if (!userId)
-    return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+export const PATCH = apiHandler({
+  body: bodySchema,
+  handle: async ({ supabase, userId, body }) => {
+    const { error } = await supabase
+      .from("user_books")
+      .update({
+        is_owned: body.isOwned,
+      })
+      .select("is_owned")
+      .eq("user_id", userId)
+      .eq("isbn", body.isbn)
+      .single();
 
-  let body;
-  try {
-    body = await request.json();
-  } catch {
-    return NextResponse.json({ error: "Invalid JSON body" }, { status: 400 });
-  }
+    if (error) throwDbError(error, "Failed to update book status");
 
-  const parsedBody = bodySchema.safeParse(body);
-  if (!parsedBody.success) {
-    return NextResponse.json({ error: "Invalid ISBN data" }, { status: 400 });
-  }
-
-  const { error } = await supabase
-    .from("user_books")
-    .update({
-      is_owned: parsedBody.data.isOwned,
-    })
-    .select("is_owned")
-    .eq("user_id", userId)
-    .eq("isbn", parsedBody.data.isbn)
-    .single();
-
-  if (error) {
-    return NextResponse.json(
-      { error: "Failed to update book status" },
-      { status: 500 },
-    );
-  }
-
-  return NextResponse.json({ result: "success update" }, { status: 200 });
-}
+    return NextResponse.json({ result: "success update" }, { status: 200 });
+  },
+});

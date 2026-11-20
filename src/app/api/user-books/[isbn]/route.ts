@@ -1,24 +1,13 @@
-import { createSupabaseClient } from "@/lib/supabase";
-import { NextRequest, NextResponse } from "next/server";
+import { NextResponse } from "next/server";
+import z from "zod";
 import { IsbnSchema, UserBookSchema } from "@/lib/schema/book";
+import { apiHandler } from "@/lib/api/handler";
+import { ApiError, throwDbError } from "@/lib/api/errors";
 
 // isbnを受け取ってuser-booksに含まれる場合、その書籍データを返すAPI
-export async function GET(
-  _request: NextRequest,
-  { params }: { params: Promise<{ isbn: string }> },
-) {
-  const { supabase, userId } = await createSupabaseClient();
-  if (!userId) {
-    return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
-  }
-
-  const { isbn } = await params;
-  const parsedIsbn = IsbnSchema.safeParse(isbn);
-  if (!parsedIsbn.success) {
-    return NextResponse.json({ error: "Invalid ISBN data" }, { status: 400 });
-  }
-
-  try {
+export const GET = apiHandler({
+  params: z.object({ isbn: IsbnSchema }),
+  handle: async ({ supabase, userId, params }) => {
     const { data, error } = await supabase
       .from("user_books")
       .select(
@@ -37,39 +26,23 @@ export async function GET(
       `,
       )
       .eq("user_id", userId)
-      .eq("isbn", parsedIsbn.data)
+      .eq("isbn", params.isbn)
       .maybeSingle();
 
-    if (error) {
-      console.error(error);
-      return NextResponse.json(
-        { error: "Failed to fetch user books" },
-        { status: 500 },
-      );
-    }
+    if (error) throwDbError(error, "Failed to fetch user books");
 
     if (!data || !data.books) {
-      return NextResponse.json({ error: "Book not found" }, { status: 404 });
+      throw new ApiError(404, "Book not found");
     }
 
-    const result = {
+    const parsedResult = UserBookSchema.safeParse({
       isOwned: data.is_owned ? "owned" : "in_library",
       book: data.books,
-    };
-
-    const parsedResult = UserBookSchema.safeParse(result);
+    });
     if (!parsedResult.success) {
-      return NextResponse.json(
-        { error: "Invalid user book data" },
-        { status: 500 },
-      );
+      throw new ApiError(500, "Invalid user book data", parsedResult.error);
     }
+
     return NextResponse.json(parsedResult.data);
-  } catch (error) {
-    console.log(error);
-    return NextResponse.json(
-      { error: "Unexpected server error" },
-      { status: 500 },
-    );
-  }
-}
+  },
+});

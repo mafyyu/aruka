@@ -1,58 +1,48 @@
-import { NextRequest, NextResponse } from "next/server";
+import { NextResponse } from "next/server";
 import { bodySchema, BookResponseSchema } from "@/lib/schema/book";
+import { apiHandler } from "@/lib/api/handler";
+import { ApiError } from "@/lib/api/errors";
 
-export async function POST(request: NextRequest) {
-  let body;
+export const POST = apiHandler({
+  body: bodySchema,
+  handle: async ({ body }) => {
+    const { isbn } = body;
 
-  try {
-    body = await request.json();
-  } catch {
-    return NextResponse.json({ error: "Invalid JSON body" }, { status: 400 });
-  }
-  const parsedBody = bodySchema.safeParse(body);
+    const baseUrl = process.env.RAKUTEN_API_BASE_URL;
+    if (!baseUrl) {
+      throw new ApiError(500, "RAKUTEN_API_BASE_URL is not configured");
+    }
 
-  // バーコードが適していない場合にはエラーを返す
-  if (!parsedBody.success) {
-    return NextResponse.json({ error: "Invalid ISBN" }, { status: 400 });
-  }
-
-  const { isbn } = parsedBody.data;
-
-  const baseUrl = process.env.RAKUTEN_API_BASE_URL;
-  if (!baseUrl) {
-    return NextResponse.json(
-      { error: "RAKUTEN_API_BASE_URL is not configured" },
-      { status: 500 },
-    );
-  }
-
-  try {
-    const res = await fetch(`${baseUrl}&isbn=${isbn}`);
-    if (!res.ok) {
-      return NextResponse.json(
-        { error: "Failed to fetch data from Rakuten API" },
-        { status: 502 },
+    let res: Response;
+    try {
+      res = await fetch(`${baseUrl}&isbn=${isbn}`);
+    } catch (error) {
+      throw new ApiError(
+        502,
+        "Unexpected error while fetching Rakuten API",
+        error,
       );
     }
-    const data = await res.json();
-    const parsedResponse = BookResponseSchema.safeParse(data);
+    if (!res.ok) {
+      throw new ApiError(
+        502,
+        "Failed to fetch data from Rakuten API",
+        `Rakuten API responded with ${res.status}`,
+      );
+    }
 
+    const data = await res.json().catch((error) => {
+      throw new ApiError(502, "Invalid book API response", error);
+    });
+    const parsedResponse = BookResponseSchema.safeParse(data);
     if (!parsedResponse.success) {
-      console.error(
-        "Failed to parse Rakuten API response",
+      throw new ApiError(
+        502,
+        "Invalid book API response",
         parsedResponse.error,
       );
-      return NextResponse.json(
-        { error: "Invalid book API response" },
-        { status: 502 },
-      );
     }
+
     return NextResponse.json(parsedResponse.data, { status: 200 });
-  } catch (error) {
-    console.log(error);
-    return NextResponse.json(
-      { error: "Unexpected error while fetching Rakuten API" },
-      { status: 502 },
-    );
-  }
-}
+  },
+});

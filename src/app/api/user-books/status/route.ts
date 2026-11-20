@@ -1,44 +1,33 @@
-import { NextRequest, NextResponse } from "next/server";
+import { NextResponse } from "next/server";
+import z from "zod";
 import { IsbnSchema } from "@/lib/schema/book";
-import { createSupabaseClient } from "@/lib/supabase";
+import { apiHandler } from "@/lib/api/handler";
+import { ApiError } from "@/lib/api/errors";
 
 type LibraryStatus = "not_in_library" | "in_library" | "owned";
 
 // user_booksに存在するか確認するAPI
-export async function GET(request: NextRequest) {
-  const { supabase, userId } = await createSupabaseClient();
-  if (!userId)
-    return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+export const GET = apiHandler({
+  query: z.object({ isbn: IsbnSchema }),
+  handle: async ({ supabase, userId, query }) => {
+    const { data, error } = await supabase
+      .from("user_books")
+      .select("is_owned")
+      .eq("isbn", query.isbn)
+      .eq("user_id", userId)
+      .maybeSingle();
 
-  const isbn = request.nextUrl.searchParams.get("isbn");
-  if (!isbn) {
-    return NextResponse.json({ error: "ISBN required" }, { status: 400 });
-  }
+    if (error) throw new ApiError(500, "DB error", error);
 
-  const parsedIsbn = IsbnSchema.safeParse(isbn);
-  if (!parsedIsbn.success) {
-    return NextResponse.json({ error: "Invalid ISBN data" }, { status: 400 });
-  }
+    let status: LibraryStatus;
+    if (!data) {
+      status = "not_in_library";
+    } else if (data.is_owned) {
+      status = "owned";
+    } else {
+      status = "in_library";
+    }
 
-  const { data, error } = await supabase
-    .from("user_books")
-    .select("is_owned")
-    .eq("isbn", parsedIsbn.data)
-    .eq("user_id", userId)
-    .maybeSingle();
-
-  if (error) {
-    return NextResponse.json({ error: "DB error" }, { status: 500 });
-  }
-  let status: LibraryStatus;
-
-  if (!data) {
-    status = "not_in_library";
-  } else if (data.is_owned) {
-    status = "owned";
-  } else {
-    status = "in_library";
-  }
-
-  return NextResponse.json({ status: status });
-}
+    return NextResponse.json({ status });
+  },
+});
