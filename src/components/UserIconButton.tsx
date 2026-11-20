@@ -5,6 +5,8 @@ export function UserIconButton() {
       appearance={{
         elements: {
           userButtonTrigger: {
+            width: "44px",
+            height: "44px",
             backgroundColor: "transparent",
             boxShadow: "none",
             "&:focus": {
@@ -15,6 +17,8 @@ export function UserIconButton() {
             },
           },
           userButtonAvatarBox: {
+            width: "32px",
+            height: "32px",
             backgroundColor: "transparent",
           },
           userButtonAvatarImage: {
