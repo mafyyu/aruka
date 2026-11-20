@@ -23,8 +23,7 @@ export async function GET() {
           author,
           publisherName,
           image,
-          caption,
-          salesDate
+          caption
         )
       `,
       )
