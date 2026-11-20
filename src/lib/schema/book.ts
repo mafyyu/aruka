@@ -13,7 +13,6 @@ export const BookSchema = z.object({
   isbn: IsbnSchema,
   image: z.string().nullable(),
   caption: z.string(),
-  salesDate: z.string(),
 });
 
 export const ResponseSchema = z.object({
@@ -24,7 +23,6 @@ export const ResponseSchema = z.object({
   isbn: IsbnSchema,
   largeImageUrl: z.url().optional(),
   itemCaption: z.string(),
-  salesDate: z.string(),
 });
 
 export const BookResponseSchema = z
@@ -44,7 +42,6 @@ export const BookResponseSchema = z
       isbn: Item.isbn,
       image: Item.largeImageUrl ?? null,
       caption: Item.itemCaption,
-      salesDate: Item.salesDate,
     })),
   );
 
