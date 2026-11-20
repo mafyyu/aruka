@@ -1,12 +1,6 @@
 "use client";
-import { BrowserMultiFormatOneDReader } from "@zxing/browser";
-import { useCallback, useEffect, useRef, useState } from "react";
+import { useCallback, useState } from "react";
 import { useRouter } from "next/navigation";
-import {
-  BarcodeFormat,
-  DecodeHintType,
-  NotFoundException,
-} from "@zxing/library";
 import CloseHeader from "@/components/CloseHeader";
 import BookPreview from "@/components/BookPreview";
 import Divider from "@/components/Divider";
@@ -20,6 +14,7 @@ import { addUserBook } from "@/lib/addUserBook";
 import { updateOwnStatus } from "@/lib/updateOwnStatus";
 import { toast } from "react-hot-toast";
 import { LoadingLottie } from "@/components/LoadingLottie";
+import { useBarcodeScanner } from "./useBarcodeScanner";
 
 type Book = z.infer<typeof BookSchema>;
 type LibraryStatus = "not_in_library" | "in_library" | "owned";
@@ -32,18 +27,16 @@ type FetchState =
 
 export default function Scan() {
   const router = useRouter();
-  const videoRef = useRef<HTMLVideoElement>(null);
-  const readerRef = useRef<BrowserMultiFormatOneDReader | null>(null);
 
   const [isbn, setIsbn] = useState<string>("");
   const [isScanning, setIsScanning] = useState(true);
-  const [cameraReady, setCameraReady] = useState(false);
   const [result, setResult] = useState<Book[] | null>(null);
   const [isSaving, setIsSaving] = useState<boolean>(false);
   const [status, setStatus] = useState<LibraryStatus>("not_in_library");
   const [fetchState, setFetchState] = useState<FetchState>({
     status: "idle",
   });
+
   // エラーからtoastを出して元の画面に戻す共通関数
   const handleScanError = (message: string) => {
     toast.error(message, { duration: 5000 });
@@ -107,60 +100,19 @@ export default function Scan() {
     }
   }, []);
 
-  const mountedRef = useRef(true);
+  const handleBarcodeDetect = useCallback(
+    (detectedIsbn: string) => {
+      setIsbn(detectedIsbn);
+      setIsScanning(false);
+      fetchBook(detectedIsbn);
+    },
+    [fetchBook],
+  );
 
-  // カメラ操作
-  useEffect(() => {
-    if (!videoRef.current) return;
-    mountedRef.current = true;
-    let stream: MediaStream | null = null;
-
-    const constraints: MediaStreamConstraints = {
-      audio: false,
-      video: {
-        facingMode: { ideal: "environment" },
-        width: { ideal: 1280 },
-        height: { ideal: 360 },
-        aspectRatio: { ideal: 2 / 1 },
-      },
-    };
-
-    // 特定のバーコードのみ読み取り
-    const hints = new Map();
-    hints.set(DecodeHintType.POSSIBLE_FORMATS, [BarcodeFormat.EAN_13]);
-
-    const codeReader = new BrowserMultiFormatOneDReader(hints);
-    readerRef.current = codeReader;
-
-    codeReader.decodeFromConstraints(
-      constraints,
-      videoRef.current,
-      (result, error, controls) => {
-        if (!stream && videoRef.current?.srcObject instanceof MediaStream) {
-          stream = videoRef.current.srcObject;
-        }
-        if (mountedRef.current === false) {
-          controls.stop();
-          return;
-        }
-        if (result) {
-          const text = result.getText();
-          if (text.startsWith("978") || text.startsWith("979")) {
-            setIsbn(text);
-            controls.stop();
-            setIsScanning(false);
-            fetchBook(text);
-          } else return;
-        }
-        if (error && !(error instanceof NotFoundException)) {
-          console.log("error", error);
-        }
-      },
-    );
-    return () => {
-      mountedRef.current = false;
-    };
-  }, [isScanning, fetchBook]);
+  const { videoRef, cameraReady, setCameraReady } = useBarcodeScanner({
+    enabled: isScanning,
+    onDetect: handleBarcodeDetect,
+  });
 
   // dbに追加する処理
   const handleAdd = async (isOwned: boolean) => {
