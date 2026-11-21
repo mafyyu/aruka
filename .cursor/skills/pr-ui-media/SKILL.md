@@ -53,10 +53,10 @@ npm exec --yes --package=playwright -- node .cursor/skills/pr-ui-media/capture.m
 
 4. **manifest 確認** — `.pr-media/manifest.json` の `ok: false` は未撮影理由として本文へ（Clerk 未ログインなど）。ログイン自動化はしない。
 5. **PR 本文** — リポジトリルートの [`.github/pull_request_template.md`](../../../.github/pull_request_template.md) を読み、コピーして埋める。
-   - 構成はテンプレ通り（変更内容 → 変更ファイル → 見た目）。スキル側で本文フォーマットを再定義しない
+   - 構成はテンプレ通り（変更内容 → 変更ファイル → UI/UX）。スキル側で本文フォーマットを再定義しない
    - **変更内容**: 変更の要点を箇条書き
    - **変更ファイル**: この PR で触ったファイルを一覧（`git diff --name-only` など）
-   - **見た目**: プレースホルダを実ファイルパス（`.pr-media/...`）に差し替え。UI 変更なしなら「なし」
+   - **UI/UX**: プレースホルダを実ファイルパス（`.pr-media/...`）に差し替え。UI 変更なしなら「なし」
 6. **添付** — ホストで分岐（詳細は [reference.md](reference.md)）
 
 **GitHub（このリポジトリの通常経路） / 他エージェント**

@@ -2,7 +2,7 @@
 
 ## PR 本文テンプレート
 
-本文の骨格は [`.github/pull_request_template.md`](../../../.github/pull_request_template.md) を使う。スキルは Visual のパス差し替えと `--attach` だけ担当する。
+本文の骨格は [`.github/pull_request_template.md`](../../../.github/pull_request_template.md) を使う。スキルは UI/UX 節のパス差し替えと `--attach` だけ担当する。
 
 ## gh --attach（GitHub）
 
