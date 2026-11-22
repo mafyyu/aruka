@@ -1,22 +1,27 @@
 const style = {
   container: {
     display: "flex",
-    gap: "12px",
+    gap: "8px",
     justifyContent: "center",
-    alignItems: "center",
+    alignItems: "stretch",
+    width: "100%",
+    maxWidth: "420px",
+    margin: "0 auto",
   },
   badge: {
     display: "flex",
+    flex: "1 1 0",
+    minWidth: 0,
+    minHeight: "44px",
     borderRadius: "40px",
-    width: "100px",
     backgroundColor: "#F3F3F3CC",
     color: "black",
     alignItems: "center",
     justifyContent: "center",
-    aspectRatio: "4/1",
     margin: "8px 0px",
-    padding: "3px",
-    fontSize: "13px",
+    padding: "8px 6px",
+    fontSize: "14px",
+    lineHeight: 1.2,
     border: "none",
   },
 };
@@ -63,6 +68,8 @@ export default function SegmentedControl({
         {options.map((o) => {
           return (
             <button
+              type="button"
+              aria-pressed={status === o.value}
               style={{
                 ...style.badge,
                 ...(status === o.value ? STATUS_STYLE[o.value] : {}),
