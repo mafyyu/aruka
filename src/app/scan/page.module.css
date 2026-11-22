@@ -1,6 +1,19 @@
-.header{
+.page {
+  min-height: 100vh;
+  min-height: 100dvh;
+  background: #fff;
+  padding-top: env(safe-area-inset-top);
+  padding-right: env(safe-area-inset-right);
+  padding-bottom: env(safe-area-inset-bottom);
+  padding-left: env(safe-area-inset-left);
+}
+
+.header {
+  position: sticky;
+  top: env(safe-area-inset-top);
+  z-index: 20;
   height: 70px;
-  position: relative;
+  background: #fff;
 }
 .divider {
   width: 100%;
