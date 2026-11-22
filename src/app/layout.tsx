@@ -39,7 +39,16 @@ export default function RootLayout({
     <ClerkProvider>
       <html lang="ja">
         <body className={notoSans.className}>
-          <Toaster />
+          <Toaster
+            containerStyle={{
+              top: "max(8px, env(safe-area-inset-top))",
+            }}
+            toastOptions={{
+              style: {
+                maxWidth: "min(420px, calc(100% - 32px))",
+              },
+            }}
+          />
           {children}
         </body>
       </html>
