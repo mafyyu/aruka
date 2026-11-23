@@ -12,7 +12,7 @@
   },
   "dependencies": {
     "@clerk/nextjs": "^6.39.8",
-    "@supabase/supabase-js": "^2.119.0",
+    "@supabase/supabase-js": "^2.119.2",
     "@zxing/browser": "^0.2.1",
     "@zxing/library": "^0.23.0",
     "lottie-react": "^3.1.2",
