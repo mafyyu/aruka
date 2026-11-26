@@ -63,7 +63,13 @@ npm run pr-media -- --login --video --duration 8 /scan
 | `manifest-reporter.ts` | 結果を `.pr-media/manifest.json` に書くカスタムレポーター |
 | `lib.ts` | 設定・パス→ファイル名変換・ページを開く処理（リダイレクト検出）の共通部分 |
 
-`.cursor/` 配下はアプリの tsconfig の対象外なので、Next.js のビルドには影響しない。
+`.agents/` 配下はアプリの tsconfig の対象外なので、Next.js のビルドには影響しない。
+
+### 置き場所（エージェント共通）
+
+本体は `.agents/skills/pr-ui-media/` に置く。Codex・Cursor・GitHub Copilot などはここを読む。
+Claude Code は `.claude/skills/` しか読まないため、`.claude/skills/pr-ui-media` を本体へのシンボリックリンクにしている。
+編集は `.agents/skills/` 側で行う。
 
 | オプション | 意味 | 既定 |
 |------------|------|------|
