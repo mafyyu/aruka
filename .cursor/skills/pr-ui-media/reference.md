@@ -42,13 +42,28 @@ Origin ホストのリポジトリ向け。返ってきた `url` を本文に書
 
 ## capture.mjs
 
-`playwright` を devDependencies に入れた上で、npm script 経由で実行する。
+`@playwright/test` と `@clerk/testing` を devDependencies に入れた上で、npm script 経由で実行する。
 
 ```bash
 npm run pr-media -- /scan /library
 
-npm run pr-media -- --video --duration 8 /scan
+npm run pr-media -- --login /library
+
+npm run pr-media -- --login --video --duration 8 /scan
 ```
+
+### 構成
+
+| ファイル | 役割 |
+|----------|------|
+| `capture.mjs` | CLI。引数を解析し、環境変数（`PR_MEDIA_*`）にして Playwright Test を起動する |
+| `playwright.config.ts` | mobile / desktop の 2 プロジェクト、`.env.local` の読み込み |
+| `global-setup.ts` | `--login` 時に Clerk テストユーザーでログインし、セッションを `.pr-media/.auth/user.json` に保存 |
+| `capture.spec.ts` | パスごとのスクショ、または全パスを通しで撮る動画 |
+| `manifest-reporter.ts` | 結果を `.pr-media/manifest.json` に書くカスタムレポーター |
+| `lib.ts` | 設定・パス→ファイル名変換・ページを開く処理（リダイレクト検出）の共通部分 |
+
+`.cursor/` 配下はアプリの tsconfig の対象外なので、Next.js のビルドには影響しない。
 
 | オプション | 意味 | 既定 |
 |------------|------|------|
@@ -56,6 +71,7 @@ npm run pr-media -- --video --duration 8 /scan
 | `--out DIR` | 出力先 | `.pr-media` |
 | `--video` | 短尺動画（viewport ごと） | off（スクショ） |
 | `--duration SEC` | 動画の長さ（viewport あたり） | `8` |
+| `--login` | Clerk テストユーザーでログインしてから撮る | off |
 
 `--base=URL` のような `=` 形式も可。
 
@@ -63,6 +79,6 @@ npm run pr-media -- --video --duration 8 /scan
 
 常に **mobile (390×844, isMobile / hasTouch / iPhone UA)** と **desktop (1280×720)** の両方を撮る。
 
-- 1 件でも失敗すると exit code 1。詳細は `manifest.json`
+- 1 件でも失敗すると exit code 1。詳細は `manifest.json`（Playwright の詳細ログは `.pr-media/.test-results/`）
 - HTTP 4xx/5xx や別パスへのリダイレクト（未ログイン等）は失敗扱い
 - `manifest.json` は実行ごとに追記（同じ `file` のエントリは置き換え）。各エントリに `capturedAt` が付く

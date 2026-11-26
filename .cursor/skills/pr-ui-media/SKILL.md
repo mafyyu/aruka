@@ -40,8 +40,9 @@ API / `src/lib/**` のみならスキップ。ただしローディング表示�
 ## 手順
 
 0. **前提確認**
-   - `playwright` が devDependencies に入っていること（無ければ `npm i -D playwright`）
+   - `@playwright/test` と `@clerk/testing` が devDependencies に入っていること（無ければ `npm i -D @playwright/test @clerk/testing`）
    - 初回は Chromium が必要: `npx playwright install chromium`
+   - ログインが必要なページを撮るなら `.env.local` に Clerk の設定があること（下の「ログインが必要なページ」）
    - `gh` が 2.99.0 以上であること（`gh --version`。`--attach` は 2.99.0 で追加）
 1. **ルート選定** — 変更に対応するパス（例: `/scan`, `/library`, `/login`, `/`）
 2. **アプリ起動** — `npm run dev` 等が `http://localhost:3000` で応答していること
@@ -49,12 +50,16 @@ API / `src/lib/**` のみならスキップ。ただしローディング表示�
 
 ```bash
 npm run pr-media -- /scan /library
+# ログインが必要なページ（/library など）
+npm run pr-media -- --login /scan /library
 # 動画が必要なとき
-npm run pr-media -- --video --duration 8 /scan
+npm run pr-media -- --login --video --duration 8 /scan
 ```
 
+`/` と `/login` 以外は Clerk で保護されているので、基本は `--login` を付ける。
+
 4. **manifest 確認** — 1 件でも失敗すると exit code 1 で終わる。`.pr-media/manifest.json` の `ok: false` は未撮影理由として本文へ書き、そのファイルは `--attach` しない。
-   - 未ログインでサインイン画面へリダイレクトされた場合も `ok: false`（`redirected to ...`）になる。ログイン自動化はしない
+   - サインイン画面へリダイレクトされた場合も `ok: false`（`redirected to ...`）になる。`--login` を付けて再実行する
    - manifest は実行ごとに追記される（同じファイルは上書き）。`capturedAt` で今回の結果か確認する
 5. **PR 本文** — リポジトリルートの [`.github/pull_request_template.md`](../../../.github/pull_request_template.md) を読み、コピーして埋める。
    - 構成はテンプレ通り（変更内容 → 変更ファイル → UI/UX）。スキル側で本文フォーマットを再定義しない
@@ -79,6 +84,23 @@ gh pr create --title "..." --body-file /tmp/pr-body.md \
 - `upload_pull_request_attachment` でアップロードし、返った URL を本文へ
 - 画像: `![alt](url)` / 動画: URL を単独行
 - 約 750KB 超なら圧縮、だめなら `gh --attach` にフォールバック
+
+## ログインが必要なページ
+
+`--login` を付けると、撮影前に Clerk のテストユーザーでログインしてから撮る（`@clerk/testing` の `clerk.signIn`）。
+テストユーザーの作成と鍵の設定はユーザーが行う。エージェントは鍵やセッションファイルを PR・チャットに出さない。
+
+`.env.local` に必要なもの（Clerk の **Development** インスタンスの値）:
+
+```
+NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY=pk_test_...   # アプリと共通。CLERK_PUBLISHABLE_KEY が無ければこれを使う
+CLERK_SECRET_KEY=sk_test_...
+E2E_CLERK_USER_EMAIL=pr-media+clerk_test@example.com
+```
+
+- テストユーザーは Clerk ダッシュボードの Users → Create user で作る。メールに `+clerk_test` を含める
+- 撮影専用のユーザーにして、PR に載ってもよいダミーデータだけ登録する
+- ログイン済みセッションは `.pr-media/.auth/user.json` に保存される（gitignore 済み。添付しない）
 
 ## 出力ファイル
 
