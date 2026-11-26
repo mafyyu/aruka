@@ -16,6 +16,7 @@ gh pr create \
   --attach '.pr-media/scan-desktop.png#scan (desktop)'
 ```
 
+- gh 2.99.0 以上が必要
 - `--attach` は繰り返し可
 - 画像の alt は `path#alt text`
 - 本文に `![alt](./local.png)` や `![](./local.webm)` があれば、同じパスを `--attach` したとき URL に書き換えられる
@@ -37,16 +38,16 @@ Origin ホストのリポジトリ向け。返ってきた `url` を本文に書
 | Origin ホスト + ファイルが十分小さい | `upload_pull_request_attachment` |
 | GitHub / 他エージェント / 大きいファイル | `gh … --attach` |
 
-このリポジトリの `origin` は GitHub（`mafyyu/bookbarcode-reader`）なので、通常は `gh --attach`。
+このリポジトリの `origin` は GitHub（`mafyyu/aruka`）なので、通常は `gh --attach`。
 
 ## capture.mjs
 
-```bash
-npm exec --yes --package=playwright -- \
-  node .cursor/skills/pr-ui-media/capture.mjs /scan /library
+`playwright` を devDependencies に入れた上で、npm script 経由で実行する。
 
-npm exec --yes --package=playwright -- \
-  node .cursor/skills/pr-ui-media/capture.mjs --video --duration 8 /scan
+```bash
+npm run pr-media -- /scan /library
+
+npm run pr-media -- --video --duration 8 /scan
 ```
 
 | オプション | 意味 | 既定 |
@@ -56,6 +57,12 @@ npm exec --yes --package=playwright -- \
 | `--video` | 短尺動画（viewport ごと） | off（スクショ） |
 | `--duration SEC` | 動画の長さ（viewport あたり） | `8` |
 
+`--base=URL` のような `=` 形式も可。
+
 位置引数の `/path` が撮影対象。省略時は `/`。
 
-常に **mobile (390×844)** と **desktop (1280×720)** の両方を撮る。
+常に **mobile (390×844, isMobile / hasTouch / iPhone UA)** と **desktop (1280×720)** の両方を撮る。
+
+- 1 件でも失敗すると exit code 1。詳細は `manifest.json`
+- HTTP 4xx/5xx や別パスへのリダイレクト（未ログイン等）は失敗扱い
+- `manifest.json` は実行ごとに追記（同じ `file` のエントリは置き換え）。各エントリに `capturedAt` が付く

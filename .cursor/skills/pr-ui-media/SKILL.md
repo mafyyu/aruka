@@ -39,24 +39,29 @@ API / `src/lib/**` のみならスキップ。ただしローディング表示�
 
 ## 手順
 
+0. **前提確認**
+   - `playwright` が devDependencies に入っていること（無ければ `npm i -D playwright`）
+   - 初回は Chromium が必要: `npx playwright install chromium`
+   - `gh` が 2.99.0 以上であること（`gh --version`。`--attach` は 2.99.0 で追加）
 1. **ルート選定** — 変更に対応するパス（例: `/scan`, `/library`, `/login`, `/`）
 2. **アプリ起動** — `npm run dev` 等が `http://localhost:3000` で応答していること
 3. **撮影**
 
 ```bash
-npm exec --yes --package=playwright -- node .cursor/skills/pr-ui-media/capture.mjs /scan /library
+npm run pr-media -- /scan /library
 # 動画が必要なとき
-npm exec --yes --package=playwright -- node .cursor/skills/pr-ui-media/capture.mjs --video --duration 8 /scan
+npm run pr-media -- --video --duration 8 /scan
 ```
 
-初回は Chromium が必要な場合あり: `npx playwright install chromium`
-
-4. **manifest 確認** — `.pr-media/manifest.json` の `ok: false` は未撮影理由として本文へ（Clerk 未ログインなど）。ログイン自動化はしない。
+4. **manifest 確認** — 1 件でも失敗すると exit code 1 で終わる。`.pr-media/manifest.json` の `ok: false` は未撮影理由として本文へ書き、そのファイルは `--attach` しない。
+   - 未ログインでサインイン画面へリダイレクトされた場合も `ok: false`（`redirected to ...`）になる。ログイン自動化はしない
+   - manifest は実行ごとに追記される（同じファイルは上書き）。`capturedAt` で今回の結果か確認する
 5. **PR 本文** — リポジトリルートの [`.github/pull_request_template.md`](../../../.github/pull_request_template.md) を読み、コピーして埋める。
    - 構成はテンプレ通り（変更内容 → 変更ファイル → UI/UX）。スキル側で本文フォーマットを再定義しない
    - **変更内容**: 変更の要点を箇条書き
    - **変更ファイル**: この PR で触ったファイルを一覧（`git diff --name-only` など）
-   - **UI/UX**: プレースホルダを実ファイルパス（`.pr-media/...`）に差し替え。UI 変更なしなら「なし」
+   - **UI/UX**: テンプレのコメント（`<!-- -->`）を外し、プレースホルダを実ファイルパス（`.pr-media/...`）に差し替える。使わない節は消す。UI 変更なしなら「なし」だけ書く
+   - 本文の画像パスと `--attach` のパスは **完全に同じ文字列** にする（`./` の有無も揃える）。ずれると本文に壊れた画像が残り、添付は末尾に重複して付く
 6. **添付** — ホストで分岐（詳細は [reference.md](reference.md)）
 
 **GitHub（このリポジトリの通常経路） / 他エージェント**

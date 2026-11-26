@@ -8,23 +8,28 @@
 
 ## UI/UX
 
-UI 変更がない場合は「なし」と書く。
+<!--
+UI 変更がない場合は「なし」と書き、このコメントは消す。
+
+画像・動画を載せるときは、下のサンプルをコメントの外に出し、パスを実ファイルに差し替える。
+パスは `gh pr create --attach` に渡すパスと同じ文字列にする（一致すると gh がアップロード先 URL に書き換える）。
+使わない節は消す。
 
 ### Mobile
 
-![description (mobile)](.pr-media/route-mobile.png)
+![<route> (mobile)](.pr-media/<route>-mobile.png)
 
 ### Desktop
 
-![description (desktop)](.pr-media/route-desktop.png)
+![<route> (desktop)](.pr-media/<route>-desktop.png)
 
-動画の場合は、各 viewport で次のように**段落をその行だけ**にする:
+動画の場合は、各 viewport で次のように段落をその行だけにする:
 
 ### Mobile
 
-![](.pr-media/flow-route-mobile.webm)
+![](.pr-media/flow-<routes>-mobile.webm)
 
 ### Desktop
 
-![](.pr-media/flow-route-desktop.webm)
-
+![](.pr-media/flow-<routes>-desktop.webm)
+-->

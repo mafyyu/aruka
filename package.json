@@ -8,7 +8,8 @@
     "start": "next start",
     "lint": "eslint",
     "format": "prettier --write --ignore-path .gitignore './**/*.{js,jsx,ts,tsx,json}'",
-    "prepare": "husky install"
+    "prepare": "husky install",
+    "pr-media": "node .cursor/skills/pr-ui-media/capture.mjs"
   },
   "dependencies": {
     "@clerk/nextjs": "^6.39.8",
